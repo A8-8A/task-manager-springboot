@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <h1>Task Manager API Dashboard</h1>
+
+    <div class="section">
+        <button onclick="getAllTasks()">List All Tasks</button>
+    </div>
+
+    <div class="section">
+        <input type="number" id="taskId" placeholder="Enter Task ID">
+        <button onclick="getTaskById()">Get Task By ID</button>
+    </div>
+	<h2>Tasks Table</h2>
+	<div class="section">
+	  <button onclick="getAllTasks()">Refresh Table</button>
+	</div>
+
+	<div class="tableWrap">
+	  <table id="tasksTable">
+	    <thead>
+	      <tr>
+	        <th>ID</th>
+	        <th>Task Name</th>
+	        <th>Assigned</th>
+	        <th>Due</th>
+	        <th>Priority</th>
+	        <th>Status</th>
+	        <th>Actions</th>
+	      </tr>
+	    </thead>
+	    <tbody id="tasksBody">
+	      <tr>
+	        <td colspan="7" class="muted">No data yet…</td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</div>
+
+	<h2>Raw Response (for debugging)</h2>
+	<pre id="output">Click a button to fetch data...</pre>
+
+	<div class="section card">
+	  <h2>Create Task</h2>
+
+	  <div class="grid">
+	    <input type="text" id="c_taskName" placeholder="Task Name (required)">
+	    <input type="text" id="c_assignedUser" placeholder="Assigned User">
+	    <input type="date" id="c_dueDate">
+
+	    <select id="c_priority">
+	      <option value="LOW">LOW</option>
+	      <option value="MEDIUM" selected>MEDIUM</option>
+	      <option value="HIGH">HIGH</option>
+	    </select>
+
+	    <select id="c_status">
+	      <option value="TODO" selected>TODO</option>
+	      <option value="IN_PROGRESS">IN_PROGRESS</option>
+	      <option value="DONE">DONE</option>
+	    </select>
+	  </div>
+
+	  <textarea id="c_description" placeholder="Description" rows="3"></textarea>
+
+	  <button onclick="createTask()">Create Task</button>
+	</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
