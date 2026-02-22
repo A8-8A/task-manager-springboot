@@ -1,111 +1,179 @@
+:root{
+  --bg: #f4f6f8;
+  --text: #1f2a37;
+  --muted: #6c757d;
+  --card: #ffffff;
+  --border: #e6e9ef;
+
+  --primary: #1a73e8;         /* nicer blue */
+  --primaryHover: #1558b0;
+
+  --danger: #dc3545;
+  --dangerHover: #b02a37;
+
+  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 40px;
-    background-color: #f4f6f8;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
 }
 
 h1 {
-    color: #2c3e50;
+  margin: 0 0 18px 0;
+  color: var(--text);
+  letter-spacing: 0.2px;
+}
+
+h2 {
+  margin: 22px 0 12px 0;
+  color: var(--text);
+  font-size: 18px;
 }
 
 .section {
-    margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
-button {
-    padding: 10px 18px;
-    font-size: 14px;
-    border: none;
-    border-radius: 6px;
-    background-color: #007BFF;
-    color: white;
-    cursor: pointer;
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 22px 40px;
 }
 
-button:hover {
-    background-color: #0056b3;
+/* Inputs */
+input, select, textarea {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: white;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(26,115,232,0.55);
+  box-shadow: 0 0 0 3px rgba(26,115,232,0.12);
 }
 
 input {
-    padding: 8px;
-    font-size: 14px;
-    margin-right: 10px;
+  margin-right: 10px; /* keep for your top row */
 }
 
-pre {
-    background: #1e1e1e;
-    color: #00ffcc;
-    padding: 15px;
-    border-radius: 8px;
-    overflow-x: auto;
+/* Buttons */
+button {
+  padding: 10px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 10px;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+  transition: transform 0.03s ease, background-color 0.15s ease;
 }
+
+button:hover {
+  background-color: var(--primaryHover);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+/* Small buttons in table */
+.btnSmall {
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+/* Danger button */
+.btnDanger {
+  background-color: var(--danger);
+}
+.btnDanger:hover {
+  background-color: var(--dangerHover);
+}
+
+/* Cards */
 .card {
-    background: white;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    max-width: 900px;
+  background: var(--card);
+  padding: 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 100%;
 }
 
+/* Form grid */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-select, textarea {
-    padding: 8px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 textarea {
-    width: 100%;
-    margin-bottom: 10px;
+  width: 100%;
+  margin-bottom: 10px;
+  resize: vertical;
 }
+
+/* Table */
 .tableWrap {
-    background: white;
-    padding: 12px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    max-width: 1000px;
-    overflow-x: auto;
+  background: var(--card);
+  padding: 12px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
 }
 
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th, td {
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-    text-align: left;
-    vertical-align: top;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+  font-size: 14px;
 }
 
 th {
-    background: #f7f9fb;
-    color: #2c3e50;
-    font-weight: 600;
+  background: #f7f9fb;
+  color: var(--text);
+  font-weight: 600;
 }
 
+tbody tr:hover td {
+  background: rgba(26,115,232,0.04);
+}
+
+/* Muted row text */
 .muted {
-    color: #6c757d;
-    text-align: center;
+  color: var(--muted);
+  text-align: center;
 }
 
-.btnDanger {
-    background-color: #dc3545;
-}
-.btnDanger:hover {
-    background-color: #b02a37;
+/* Raw output */
+pre {
+  background: #101827;
+  color: #86efac;
+  padding: 14px;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 
-.btnSmall {
-    padding: 7px 10px;
-    font-size: 13px;
-    border-radius: 6px;
+/* Better spacing between action buttons */
+td button + button {
+  margin-left: 8px;
 }

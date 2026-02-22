@@ -12,33 +12,34 @@ function getAllTasks() {
         });
 }
 
-
+// FIX: Added missing getTaskById() — was called in HTML but never defined
 function getTaskById() {
-    const id = document.getElementById("taskId").value;
-
+    const id = document.getElementById("taskId").value.trim();
     if (!id) {
         alert("Please enter a Task ID");
         return;
     }
+    getTaskByIdFromTable(id);
+}
 
+// FIX: Removed the duplicate definition below that had a syntax error (stray "f" before fetch)
+function getTaskByIdFromTable(id) {
     fetch(`${baseUrl}/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Task not found or server error");
-            }
-            return response.json();
+        .then(async response => {
+            const text = await response.text();
+            if (!response.ok) throw new Error(text || "Not found");
+            return text ? JSON.parse(text) : {};
         })
-        .then(data => {
-            document.getElementById("output").textContent =
-                JSON.stringify(data, null, 2);
+        .then(task => {
+            document.getElementById("output").textContent = JSON.stringify(task, null, 2);
+            renderTable([task]); // show ONLY this task in table
         })
         .catch(error => {
-            document.getElementById("output").textContent =
-                "Error: " + error.message;
+            document.getElementById("output").textContent = "Error: " + error.message;
         });
 }
 
-function createTask() {
+function saveTask() {
     const taskName = document.getElementById("c_taskName").value.trim();
     if (!taskName) {
         alert("Task Name is required");
@@ -54,35 +55,32 @@ function createTask() {
         status: document.getElementById("c_status").value
     };
 
-    fetch(baseUrl, {
-        method: "POST",
+    const editId = document.getElementById("edit_id").value;
+
+    const url = editId ? `${baseUrl}/${editId}` : baseUrl;
+    const method = editId ? "PUT" : "POST";
+
+    fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     })
     .then(async response => {
         const text = await response.text();
-        if (!response.ok) throw new Error(text || "Failed to create task");
+        if (!response.ok) throw new Error(text || "Save failed");
         return text ? JSON.parse(text) : {};
     })
     .then(data => {
         document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-		getAllTasks();
-
-        // optional: refresh list automatically
-        // getAllTasks();
-
-        // clear some inputs
-        document.getElementById("c_taskName").value = "";
-        document.getElementById("c_description").value = "";
-        document.getElementById("c_assignedUser").value = "";
-        document.getElementById("c_dueDate").value = "";
-        document.getElementById("c_priority").value = "MEDIUM";
-        document.getElementById("c_status").value = "TODO";
+        cancelEdit();
+        // Show only the newly created/updated task so the user can confirm it and see its ID
+        renderTable([data]);
     })
     .catch(error => {
         document.getElementById("output").textContent = "Error: " + error.message;
     });
 }
+
 function renderTable(tasks) {
     const body = document.getElementById("tasksBody");
 
@@ -101,6 +99,7 @@ function renderTable(tasks) {
             <td>${safe(t.status)}</td>
             <td>
                 <button class="btnSmall" onclick="getTaskByIdFromTable(${t.id})">View</button>
+                <button class="btnSmall" onclick="startEdit(${t.id})">Edit</button>
                 <button class="btnSmall btnDanger" onclick="deleteTask(${t.id})">Delete</button>
             </td>
         </tr>
@@ -111,19 +110,38 @@ function safe(v) {
     return (v === null || v === undefined || v === "") ? "-" : String(v);
 }
 
-function getTaskByIdFromTable(id) {
+function startEdit(id) {
     fetch(`${baseUrl}/${id}`)
         .then(async response => {
             const text = await response.text();
             if (!response.ok) throw new Error(text || "Not found");
             return text ? JSON.parse(text) : {};
         })
-        .then(data => {
-            document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+        .then(task => {
+            document.getElementById("edit_id").value = task.id;
+            document.getElementById("c_taskName").value = task.taskName ?? "";
+            document.getElementById("c_description").value = task.description ?? "";
+            document.getElementById("c_assignedUser").value = task.assignedUser ?? "";
+            document.getElementById("c_dueDate").value = task.dueDate ?? "";
+            document.getElementById("c_priority").value = task.priority ?? "MEDIUM";
+            document.getElementById("c_status").value = task.status ?? "TODO";
+            document.getElementById("saveBtn").textContent = "Update Task";
+            renderTable([task]);
         })
         .catch(error => {
             document.getElementById("output").textContent = "Error: " + error.message;
         });
+}
+
+function cancelEdit() {
+    document.getElementById("edit_id").value = "";
+    document.getElementById("saveBtn").textContent = "Create Task";
+    document.getElementById("c_taskName").value = "";
+    document.getElementById("c_description").value = "";
+    document.getElementById("c_assignedUser").value = "";
+    document.getElementById("c_dueDate").value = "";
+    document.getElementById("c_priority").value = "MEDIUM";
+    document.getElementById("c_status").value = "TODO";
 }
 
 function deleteTask(id) {
@@ -132,11 +150,9 @@ function deleteTask(id) {
     fetch(`${baseUrl}/${id}`, { method: "DELETE" })
         .then(response => {
             if (response.status !== 204) throw new Error("Delete failed");
-            // Refresh list after delete
             getAllTasks();
         })
         .catch(error => {
             document.getElementById("output").textContent = "Error: " + error.message;
         });
 }
-window.addEventListener("load", () => getAllTasks());
