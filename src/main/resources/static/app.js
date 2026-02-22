@@ -22,7 +22,6 @@ function getTaskById() {
     getTaskByIdFromTable(id);
 }
 
-// FIX: Removed the duplicate definition below that had a syntax error (stray "f" before fetch)
 function getTaskByIdFromTable(id) {
     fetch(`${baseUrl}/${id}`)
         .then(async response => {
@@ -32,7 +31,7 @@ function getTaskByIdFromTable(id) {
         })
         .then(task => {
             document.getElementById("output").textContent = JSON.stringify(task, null, 2);
-            renderTable([task]); // show ONLY this task in table
+            renderTable([task]);
         })
         .catch(error => {
             document.getElementById("output").textContent = "Error: " + error.message;
@@ -56,7 +55,6 @@ function saveTask() {
     };
 
     const editId = document.getElementById("edit_id").value;
-
     const url = editId ? `${baseUrl}/${editId}` : baseUrl;
     const method = editId ? "PUT" : "POST";
 
@@ -73,7 +71,6 @@ function saveTask() {
     .then(data => {
         document.getElementById("output").textContent = JSON.stringify(data, null, 2);
         cancelEdit();
-        // Show only the newly created/updated task so the user can confirm it and see its ID
         renderTable([data]);
     })
     .catch(error => {
@@ -90,7 +87,7 @@ function renderTable(tasks) {
     }
 
     body.innerHTML = tasks.map(t => `
-        <tr>
+        <tr id="row-${t.id}">
             <td>${safe(t.id)}</td>
             <td>${safe(t.taskName)}</td>
             <td>${safe(t.assignedUser)}</td>
@@ -98,12 +95,55 @@ function renderTable(tasks) {
             <td>${safe(t.priority)}</td>
             <td>${safe(t.status)}</td>
             <td>
-                <button class="btnSmall" onclick="getTaskByIdFromTable(${t.id})">View</button>
+                <button class="btnSmall" onclick="toggleDetail(${t.id})">View</button>
                 <button class="btnSmall" onclick="startEdit(${t.id})">Edit</button>
                 <button class="btnSmall btnDanger" onclick="deleteTask(${t.id})">Delete</button>
             </td>
         </tr>
+        <tr id="detail-${t.id}" class="detailRow" style="display:none;">
+            <td colspan="7">
+                <div class="detailCard">
+                    <div class="detailGrid">
+                        <div class="detailField">
+                            <span class="detailLabel">Task ID</span>
+                            <span class="detailValue">${safe(t.id)}</span>
+                        </div>
+                        <div class="detailField">
+                            <span class="detailLabel">Task Name</span>
+                            <span class="detailValue">${safe(t.taskName)}</span>
+                        </div>
+                        <div class="detailField">
+                            <span class="detailLabel">Assigned User</span>
+                            <span class="detailValue">${safe(t.assignedUser)}</span>
+                        </div>
+                        <div class="detailField">
+                            <span class="detailLabel">Due Date</span>
+                            <span class="detailValue">${safe(t.dueDate)}</span>
+                        </div>
+                        <div class="detailField">
+                            <span class="detailLabel">Priority</span>
+                            <span class="detailValue">${safe(t.priority)}</span>
+                        </div>
+                        <div class="detailField">
+                            <span class="detailLabel">Status</span>
+                            <span class="detailValue">${safe(t.status)}</span>
+                        </div>
+                    </div>
+                    <div class="detailField detailFullWidth">
+                        <span class="detailLabel">Description</span>
+                        <span class="detailValue">${safe(t.description)}</span>
+                    </div>
+                </div>
+            </td>
+        </tr>
     `).join("");
+}
+
+// Toggles the expandable detail row open and closed
+function toggleDetail(id) {
+    const detailRow = document.getElementById(`detail-${id}`);
+    const isVisible = detailRow.style.display !== "none";
+    detailRow.style.display = isVisible ? "none" : "table-row";
 }
 
 function safe(v) {

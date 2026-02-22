@@ -177,3 +177,44 @@ pre {
 td button + button {
   margin-left: 8px;
 }
+/* Expandable detail row */
+.detailRow td {
+    padding: 0;
+    background: #f0f5ff;
+    border-bottom: 2px solid var(--primary);
+}
+
+.detailCard {
+    padding: 16px 20px;
+}
+
+.detailGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.detailField {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detailLabel {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.detailValue {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.detailFullWidth {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
